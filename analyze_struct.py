@@ -31,31 +31,48 @@ def slice_image(image, path_to_dir, start_coordinates, number_slices):
 
         result_image = find_ferrite(crop_img)
 
-        print("%i: %4.2f%%" % (i + 1, percentage_ferrite(result_image)))
+        print("%i: %4.2f%%" % (i + 1, get_percentage_ferrite(result_image)))
 
         cv2.imwrite(path_to_dir + f"/{i + 1}.jpg", result_image)
 
 
-def find_ferrite(image):
+def find_ferrite(image, theshold_pixel= 180, threshold_contour=5000):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    binary = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)[1]
+    binary = cv2.threshold(gray, theshold_pixel, 255, cv2.THRESH_BINARY)[1]
     contours, hierarchy = cv2.findContours(binary,
                                            cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-    # cv2.drawContours(image, contours, -1, (170, 170, 255), 3)
-
+    # cv2.imwrite(f"./res.png", binary)
     i = 0
     for contour in contours:
-        if cv2.contourArea(contour) < 15000:
+        # x,y,w,h = cv2.boundingRect(contour)
+        if cv2.contourArea(contour) < threshold_contour:
             convexHull = cv2.convexHull(contour)
             cv2.fillPoly(binary, [convexHull], (0, 0, 0))
 
+    binary = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
     return binary
 
-
-def percentage_ferrite(image):
+def get_percentage_ferrite(image):
     return numpy.sum(image == 255) / image.size * 100
 
+def openImage(path):
+    return read_image(path)
+
+def runProcessing(image, name, threshold_pixel, threshold_contour):
+    try:
+        image = increase_contrast(image)
+    except cv2.error as e:
+        print(f'image {name} isn\'t processed')
+
+    result_image = find_ferrite(image, theshold_pixel=threshold_pixel, threshold_contour=threshold_contour)
+    # cv2.imwrite(f"./res_{name}", result_image)
+
+    # print(type(result_image))
+    return result_image
+
+def saveImage(path, image):
+    cv2.imwrite(path, image)
 
 def main():
     if len(sys.argv) != 3:
@@ -79,8 +96,8 @@ def main():
     result_perc_ferrite = {}
     for name_image in images:
         print(name_image)
-
-        image = read_image(sys.argv[1] + "/" + name_image)
+        print(sys.argv[1]  + "\\" + name_image)
+        image = read_image(sys.argv[1] + "\\" + name_image)
 
         try:
             image = increase_contrast(image)
@@ -93,9 +110,11 @@ def main():
             os.mkdir(path_dir)
             slice_image(image, path_dir, start_coordinates, number_slices)
 
-        image = image[start_coordinates[0]:image.shape[0], start_coordinates[1]:image.shape[1]]
+        # cv2.imshow('image', image)
+        # cv2.waitKey(0)
+        # image = image[start_coordinates[0]:image.shape[0], start_coordinates[1]:image.shape[1]]
         result_image = find_ferrite(image)
-        result_perc_ferrite[name_image] = percentage_ferrite(result_image)
+        result_perc_ferrite[name_image] = get_percentage_ferrite(result_image)
         cv2.imwrite(f"./res_{name_image}", result_image)
 
     with open("./result.txt", "w") as result_txt:

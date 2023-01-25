@@ -43,7 +43,6 @@ def find_ferrite(image, theshold_pixel= 180, threshold_contour=5000):
                                            cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     # cv2.imwrite(f"./res.png", binary)
-    i = 0
     for contour in contours:
         # x,y,w,h = cv2.boundingRect(contour)
         if cv2.contourArea(contour) < threshold_contour:

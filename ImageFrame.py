@@ -29,7 +29,7 @@ class ImageFrame(wx.Frame):
         control_panel.Bind(wx.EVT_TOGGLEBUTTON, self.changeImage)
         control_sizer.Add(change_image, flag=wx.LEFT | wx.RIGHT, border=20)
 
-        percent_ferrite_label = wx.StaticText(control_panel, label=f"Процент: {percent_ferrite}%")
+        percent_ferrite_label = wx.StaticText(control_panel, label=f"Процент: %4.2f%%" % (percent_ferrite))
         control_sizer.Add(percent_ferrite_label, flag=wx.TOP, border=5)
 
         image_panel = wx.ScrolledWindow(main_panel)

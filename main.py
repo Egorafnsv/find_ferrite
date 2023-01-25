@@ -75,7 +75,7 @@ class mainFrame(wx.Frame):
         img = analyze_struct.openImage(path=self.path_to_file)
         result = analyze_struct.runProcessing(image=img, name=self.name_file, 
                                               threshold_contour=self.threshold_contour.GetValue(), threshold_pixel=self.threshold_pixel.GetValue())
-        percent_ferrite = f"%4.2f%%" % (analyze_struct.get_percentage_ferrite(result))
+        percent_ferrite = analyze_struct.get_percentage_ferrite(result)
         
         
         resultFrame = ImageFrame(self, self.name_file, result, percent_ferrite, self.path_to_file)

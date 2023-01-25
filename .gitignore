@@ -1,3 +1,8 @@
+#me
+build/
+dist/
+main.spec
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

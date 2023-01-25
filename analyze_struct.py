@@ -31,7 +31,7 @@ def slice_image(image, path_to_dir, start_coordinates, number_slices):
 
         result_image = find_ferrite(crop_img)
 
-        print("%i: %4.2f%%" % (i + 1, get_percentage_ferrite(result_image)))
+        # print("%i: %4.2f%%" % (i + 1, get_percentage_ferrite(result_image)))
 
         cv2.imwrite(path_to_dir + f"/{i + 1}.jpg", result_image)
 

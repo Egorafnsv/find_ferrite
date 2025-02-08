@@ -1,6 +1,5 @@
 #me
 build/
-dist/
 main.spec
 
 # Byte-compiled / optimized / DLL files
